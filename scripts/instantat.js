@@ -5,7 +5,7 @@
 
 	var snippet = { 
         template : "{macro main()}\n    <ul>\n    {foreach fruit in data.fruits}\n        ${fruit}, test\n    {/foreach}\n    </ul>\n{/macro}" , 
-        script : "{\n    $classpath:'TestScript',\n    $prototype : {\n        myMethod : function () {\n\n        }\n    }\n}" , 
+        script : "({\n    $classpath:'TestScript',\n    $prototype : {\n        myMethod : function () {\n\n        }\n    }\n})" , 
         css : "{macro main()}\n    ul {\n        padding-left : 10px;\n        color:red;\n    }   \n{/macro}" , 
         data : "var data = {\n    fruits : [\"Banana\", \"Orange\", \"Apple\"]\n}"
     };
@@ -22,9 +22,9 @@
 
 	    updateEditorSilently(editor, snippet[currentType]);
 
-	    if (currentType == "template") editor.getSession().setMode("ace/mode/html");
+	    if (currentType == "template") editor.getSession().setMode("ace/mode/aria");
 	    if (currentType == "script") editor.getSession().setMode("ace/mode/javascript");
-	    if (currentType == "css") editor.getSession().setMode("ace/mode/css");
+	    if (currentType == "css") editor.getSession().setMode("ace/mode/aria");
 
 	   	document.getElementById("tab-" + previousType).classList.remove("tab-selected");
 	    document.getElementById("tab-" + currentType).classList.add("tab-selected");
@@ -126,9 +126,9 @@
 
 	var init = function () {
 		editor = ace.edit("multi-editor");
-		editor.setTheme("ace/theme/idle_fingers");
+		editor.setTheme("ace/theme/monokai");
 		editor.setFontSize("14px");
-		editor.getSession().setMode("ace/mode/html");
+		editor.getSession().setMode("ace/mode/aria");
 
 		data_editor = ace.edit("data-editor");
 		data_editor.setFontSize("14px");
