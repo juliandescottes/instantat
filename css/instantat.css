@@ -2,7 +2,7 @@
     position: absolute;
     top: 0;
     right: 50%;
-    bottom: 30%;
+    bottom: 506px;
     left: 0;
 }
 
@@ -101,9 +101,33 @@
     left: 0;
 }
 
+.resize-handle {
+    position : absolute;
+    height : 6px;
+    left : 0;
+    right: 50%;
+    box-sizing : border-box;
+    cursor : s-resize;
+}
+#resize-handle {
+    bottom:500px;
+    background: lightgrey;
+    box-shadow : inset 0px -1px 1px 0px #888, inset 0px 1px 3px 0px #eee;
+    border-top: 1px solid #ccc;
+}
+
+#resize-handle-proxy {
+    z-index : 1000;
+    border : 1px dotted lightgrey;
+}
+
+.resize-proxy-hidden {
+    display : none;
+}
+
 #data-editor { 
     position: absolute;
-    top: 70%;
+    height : 500px;
     right: 50%;
     bottom: 0;
     left: 0;

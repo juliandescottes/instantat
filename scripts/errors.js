@@ -114,6 +114,11 @@ ErrorManager.prototype.__hackConsoleError = function () {
 			}
 			
 		}
-		errorbkp.apply(this, arguments);
+		if (errorbkp.apply) {
+			errorbkp.apply(this, arguments);	
+		} else {
+			errorbkp(arguments[0]);
+		}
+		
 	}
 };

@@ -1,4 +1,5 @@
 (function () {
+	var $ = function (id) {return document.getElementById(id);};
 	var currentType = "template",
 		unplugged = false,
 		editor = null, store = null, data_editor = null;
@@ -193,8 +194,24 @@
 		});
 	};
 
+
+	var setPositionInPx = function (elem, posName, value) {
+		elem.style[posName] = value + "px";
+	} 
+
+	var updateEditorsFromSeparatorPosition = function (separatorPosition, separatorHeight) {
+		setPositionInPx($("editors-container"), "height", separatorPosition.top);
+		setPositionInPx($("data-editor"), "top", separatorPosition.top + separatorHeight + 1);
+		$("data-editor").style.height = "auto";
+
+		editor.resize();
+		data_editor.resize();
+	};
+
+
 	window.iat_selectEditor = selectEditor;
 	window.iat_save = save;
+	window.iat_updateEditorsPositions = updateEditorsFromSeparatorPosition;
 	window.iat_getCurrentType = function () {return currentType};
 	Aria.load({ 
 		classes:["aria.utils.HashManager"], 
