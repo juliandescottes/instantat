@@ -177,7 +177,7 @@
 	};
 
 	
-	var messageEl = document.getElementById("general-message"), 
+	var messageEl = document.getElementById("tabpanel-message"), 
 		messageTimeout;
 
 	var displayMessage = function (text) {
@@ -199,20 +199,33 @@
 		elem.style[posName] = value + "px";
 	} 
 
-	var updateEditorsFromSeparatorPosition = function (separatorPosition, separatorHeight) {
-		setPositionInPx($("editors-container"), "height", separatorPosition.top);
-		setPositionInPx($("data-editor"), "top", separatorPosition.top + separatorHeight + 1);
+	var onEditorsSplitterReleased = function (top, splitterDim) {
+		setPositionInPx($("multi-editor"), "height", top - 30);
+		setPositionInPx($("data-editor"), "top", top + splitterDim + 1);
 		$("data-editor").style.height = "auto";
-
+		
 		editor.resize();
 		data_editor.resize();
 	};
 
+	var onMainSplitterReleased = function (left, splitterDim) {
+		setPositionInPx($("editors-container"), "width", left);
+		setPositionInPx($("preview"), "left", left + splitterDim + 1);
+		
+		editor.resize();
+		data_editor.resize();
+	};
 
-	window.iat_selectEditor = selectEditor;
-	window.iat_save = save;
-	window.iat_updateEditorsPositions = updateEditorsFromSeparatorPosition;
-	window.iat_getCurrentType = function () {return currentType};
+	var exports = {
+		selectEditor : selectEditor,
+		save : save,
+		onEditorsSplitterReleased : onEditorsSplitterReleased,
+		onMainSplitterReleased : onMainSplitterReleased,
+		getCurrentType : function () {return currentType}
+	};
+
+	window.iat = exports;
+	
 	Aria.load({ 
 		classes:["aria.utils.HashManager"], 
         oncomplete:{

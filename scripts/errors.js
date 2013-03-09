@@ -25,7 +25,7 @@ ErrorManager.prototype.removeError = function (type) {
 
 
 ErrorManager.prototype.refreshErrors = function () {
-	var type = iat_getCurrentType();
+	var type = iat.getCurrentType();
 	this.updateAnnotations(this.errors[type], this.editor);
 	this.updateAnnotations(this.errors.data, this.data_editor);
 	this.updateErrorTooltip(this.errors[type], this.editor);

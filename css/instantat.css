@@ -1,10 +1,48 @@
+/*************************************************************/
+/************************* LAYOUT ****************************/
+/*************************************************************/
+
 #editors-container { 
     position: absolute;
     top: 0;
     right: 50%;
-    bottom: 506px;
+    bottom: 0;
     left: 0;
 }
+
+#multi-editor { 
+    position: absolute;
+    top: 30px;
+    right: 0;
+    height: 500px;
+    left: 0;
+}
+
+#data-editor { 
+    position: absolute;
+    top : 536px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#preview {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right : 0;
+    height:100%;
+    border:none;
+    overflow : auto;
+    box-sizing : border-box;
+    padding-left : 6px;
+}
+
+
+
+/*************************************************************/
+/************************** TABS *****************************/
+/*************************************************************/
 
 .tab-panel {
     height : 30px;
@@ -41,42 +79,6 @@
     float : right;
 }
 
-.tab-list {
-    position : absolute;
-    background:rgb(0,133,255);
-    font-weight: bold;
-    color : white;
-    top : 100%;
-    z-index : 200;
-    padding-right: 20px;
-}
-
-.tab-list ul {
-    padding-left : 20px;
-}
-
-.tab-list a:link, .tab-list a:visited, .tab-list a:active, .tab-list a:hover {
-    color : white;
-}
-.tab-list-right {
-    right : 0;
-}
-
-.tab-list-left {
-    left : 0;
-}
-
-.general-message-container {
-    float:left;
-    margin-left : 30px;
-    line-height: 30px;
-    font-weight: bold;
-}
-
-.error {
-    color : red;
-}
-
 .tab-item:hover {
     text-decoration : underline;
 }
@@ -93,54 +95,65 @@
     background : rgb(200,30,0);   
 }
 
-#multi-editor { 
-    position: absolute;
-    top: 30px;
-    right: 0;
-    bottom: 0;
-    left: 0;
+.tabpanel-message-container {
+    float:left;
+    margin-left : 30px;
+    line-height: 30px;
+    font-weight: bold;
 }
 
+/*************************************************************/
+/************************ SPLITTER ***************************/
+/*************************************************************/
+
 .resize-handle {
+    z-index : 900;
     position : absolute;
-    height : 6px;
-    left : 0;
-    right: 50%;
     box-sizing : border-box;
+}
+
+.resize-proxy {
+    z-index : 1000;
+    border : 1px dotted grey;
+}
+
+.resize-handle-v, .resize-proxy-v {
+    width : 6px;
+    height : 100%;
+    cursor : w-resize;
+}
+
+.resize-handle-h, .resize-proxy-h {
+    height : 6px;
+    width:100%;
     cursor : s-resize;
 }
-#resize-handle {
-    bottom:500px;
+
+.resize-handle-h {
     background: lightgrey;
     box-shadow : inset 0px -1px 1px 0px #888, inset 0px 1px 3px 0px #eee;
     border-top: 1px solid #ccc;
 }
 
-#resize-handle-proxy {
-    z-index : 1000;
-    border : 1px dotted lightgrey;
+.resize-handle-v {
+    background: lightgrey;
+    box-shadow : inset -1px 0px 1px 0px #888, inset 1px 0px 3px 0px #eee;
+    border-left: 1px solid #ccc;
 }
 
+#editors-splitter {
+    top:530px;
+}
+#main-splitter {
+    left : 50%;
+}
 .resize-proxy-hidden {
     display : none;
 }
 
-#data-editor { 
-    position: absolute;
-    height : 500px;
-    right: 50%;
-    bottom: 0;
-    left: 0;
-}
-
-#preview {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width : 50%;
-    height:100%;
-    border:none;
-}
+/*************************************************************/
+/******************** ERROR MESSAGES *************************/
+/*************************************************************/
 
 #error-container-main {
     top : 50px;
