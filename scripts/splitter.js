@@ -1,6 +1,5 @@
 (function () {
 	var $ = function (id) {return document.getElementById(id);};
-	var bind = function (method, scope) {return function () {method.apply(scope, arguments);};};
 	var SPLITTER_DIM = 6;
 	var currentSplitter = null;
 
@@ -9,7 +8,7 @@
 		this.proxy = $(splitterId + "-proxy");
 		this.callback = callback;
 		this.orientation = orientation;
-		this.handle.addEventListener("mousedown", bind(this.onHandleMousedown, this));
+		this.handle.addEventListener("mousedown", this.onHandleMousedown.bind(this));
 	};
 
 	Splitter.prototype.onHandleMousedown = function (evt) {
