@@ -110,6 +110,7 @@
     z-index : 900;
     position : absolute;
     box-sizing : border-box;
+    -moz-box-sizing : border-box;
 }
 
 .resize-proxy {
