@@ -125,6 +125,31 @@
 	    aria.templates.CSSMgr.unloadClassPathDependencies("Test", ["TestStyle"]);
 	};
 
+	/**
+	 * ACE Editor helper to change the shortcut for an existing built-ins command.
+	 * The exec handler will be taken from the existing command. Will log an error if the command does not exist. 
+	 * @param {Editor} editor Ace editor to update
+	 * @param {String} commandName 
+	 * @param {String} winShortcut/macShortcut shortcuts for Win/Mac (eg "Ctrl+L", "Command+G")
+	 * @return {Boolean} true only if the command was successfully added
+	 */
+	var reassignCommand = function (editor, commandName, winShortcut, macShortcut) {
+		var prevCommand = editor.commands.byName[commandName]; 
+		if (typeof prevCommand == "undefined") {
+			console.error("[instantAt:reassignCommand]Command " + cmdName + " does not exist.");
+			return false;
+		} else {
+			// addCommand will remove the command before creating the new one
+			editor.commands.addCommand({
+			    name: commandName,
+			    bindKey: {win : winShortcut, mac : macShortcut},
+			    exec: prevCommand.exec,
+			    readOnly: prevCommand.readOnly
+			})
+			return true;
+		}
+	};
+
 	var init = function () {
 		editor = ace.edit("multi-editor");
 		editor.setTheme("ace/theme/monokai");
@@ -134,6 +159,9 @@
 		data_editor = ace.edit("data-editor");
 		data_editor.setFontSize("14px");
 		data_editor.getSession().setMode("ace/mode/javascript");
+
+		reassignCommand(editor, "gotoline", "Ctrl-G", "Command-G");
+		reassignCommand(data_editor, "gotoline", "Ctrl-G", "Command-G");
 
 		editor.on("change", onEditorChange);
 		data_editor.on("change", onEditorChange);
