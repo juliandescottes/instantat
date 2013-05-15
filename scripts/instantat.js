@@ -60,12 +60,12 @@
 	};
 
 	var loadTemplateInPreview = function (classDef, data) {
+		aria.core.ClassMgr.$on({
+			"classComplete": {
+				fn : onTemplateLoaded, args: data, scope : window
+			}
+		});
     Aria["eval"](classDef); 
-    Aria.loadTemplate({
-      classpath: "Test",
-      div: "preview",
-      data: data
-    });
 	};
 
 	var loadTemplateScript = function (script_content) {
@@ -75,6 +75,25 @@
     } catch (e) {
 			errors.setError("script", "[SCRIPT ERROR] : " + e.message);
     }
+	};
+
+	var onTemplateLoaded = function(evt, data){
+		if (evt.refClasspath == "Test") {
+			Aria.loadTemplate({
+	      classpath: "Test",
+	      div: "preview",
+	      data: data
+	    });
+				    
+	    aria.templates.TemplateManager.unloadTemplate("Test");
+	    aria.templates.CSSMgr.unloadClassPathDependencies("Test", ["TestStyle"]);
+
+	    aria.core.ClassMgr.$removeListeners({
+				"classComplete": {
+					fn : onTemplateLoaded, scope : window
+				}
+			});
+		}
 	};
 
 	var loadTemplateStyle = function (css_content, data) {
@@ -121,8 +140,6 @@
     loadTemplateStyle(snippet.css, data);  
     loadTemplate(snippet.template, data);
 
-    aria.templates.TemplateManager.unloadTemplate("Test");
-    aria.templates.CSSMgr.unloadClassPathDependencies("Test", ["TestStyle"]);
 	};
 
 	/**
