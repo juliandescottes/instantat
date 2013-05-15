@@ -1,6 +1,10 @@
 /*************************************************************/
 /************************* LAYOUT ****************************/
 /*************************************************************/
+body {
+    /** temporary hack to display aria:widgets correctly **/
+    line-height : 11px;
+}
 
 #editors-container { 
     position: absolute;
