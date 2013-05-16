@@ -65,7 +65,7 @@
 				fn : onTemplateLoaded, args: data, scope : window
 			}
 		});
-    Aria["eval"](classDef); 
+    Aria["eval"](classDef);
 	};
 
 	var loadTemplateScript = function (script_content) {
@@ -84,9 +84,7 @@
 	      div: "preview",
 	      data: data
 	    });
-				    
-	    aria.templates.TemplateManager.unloadTemplate("Test");
-	    aria.templates.CSSMgr.unloadClassPathDependencies("Test", ["TestStyle"]);
+	    
 
 	    aria.core.ClassMgr.$removeListeners({
 				"classComplete": {
@@ -136,6 +134,13 @@
 
 	var refreshPreview = function () {
 		var data = loadModel(snippet.data);
+    try {
+      aria.templates.TemplateManager.unloadTemplate("Test");
+      aria.templates.CSSMgr.unloadClassPathDependencies("Test", ["TestStyle"]);
+    } catch (Oo) {
+      // I can haz lazyness
+    }
+    
     loadTemplateScript(snippet.script);
     loadTemplateStyle(snippet.css, data);  
     loadTemplate(snippet.template, data);
