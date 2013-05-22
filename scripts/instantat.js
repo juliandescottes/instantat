@@ -282,8 +282,8 @@
 		}
 	});
 
-	Aria.load({ 
-		classes:["aria.utils.HashManager"], 
+	Aria.load({
+		classes:["aria.utils.HashManager", "aria.templates.CSSClassGenerator"],
       oncomplete:{
   	    fn: function () {
   	    	// loading fake template to get necessary dependencies
