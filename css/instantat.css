@@ -208,3 +208,24 @@ body {
     z-index: 100;
     display: none;
 }
+
+#hints1 {
+    position: fixed;
+    bottom: 0px;
+    height: 20px;
+    width: 100%;
+    z-index: 999;
+    background-color: darkturquoise;
+    color: black;
+    padding: 3px;
+    margin: 0;
+    font-family: Tahoma, sans-serif;
+    font-size: 10pt;
+    border-top: 1px solid black;
+}
+
+#hideHints {
+    display:block;
+    float:right;
+    margin:0 10px;
+}
