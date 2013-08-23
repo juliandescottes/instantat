@@ -7,7 +7,7 @@ var getQueryParamByName = function(name) {
 };
 
 // Load query params or provide defaults
-var atVersion = getQueryParamByName("version") || "1.4.4";
+var atVersion = getQueryParamByName("version") || "1.4.8";
 var paramDev = getQueryParamByName('dev'), isDev = (paramDev == "true" || paramDev == 1);
 var atUrl, skinUrl, ariaPath;
 var basePath = '/atcdn/' + atVersion; // requires "atcdn" repo / "gh-pages" from the same user on GH
