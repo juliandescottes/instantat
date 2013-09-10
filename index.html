@@ -19,6 +19,30 @@
     </script>
 </head>
 <body>
+<script type="text/template" id="template-content">{macro main()}
+    <ul>
+    {foreach fruit in data.fruits}
+        <li>${fruit_index} : ${fruit}</li>
+    {/foreach}
+    </ul>
+{/macro}</script>
+<script type="text/template" id="script-content">({
+    $classpath:'TestScript',
+    $prototype : {
+        myMethod : function () {
+
+        }
+    }
+})</script>
+<script type="text/template" id="css-content">{macro main()}
+    ul {
+        padding-left : 20px;
+        font-family : Arial
+    }   
+{/macro}</script>
+<script type="text/template" id="data-content">var data = {
+    fruits : ["Banana", "Orange", "Apple"]
+}</script>
     <div id="editors-container">
         <div class="tab-panel">
             <div id="tab-template" class="tab-item tab-selected" onclick="iat.selectEditor(event)">Template</div>

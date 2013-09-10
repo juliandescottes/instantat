@@ -5,10 +5,10 @@
 		editor = null, store = null, data_editor = null;
 
 	var snippet = { 
-	  template : "{macro main()}\n    <ul>\n    {foreach fruit in data.fruits}\n        ${fruit}, test\n    {/foreach}\n    </ul>\n{/macro}" , 
-	  script : "({\n    $classpath:'TestScript',\n    $prototype : {\n        myMethod : function () {\n\n        }\n    }\n})" , 
-	  css : "{macro main()}\n    ul {\n        padding-left : 10px;\n        color:red;\n    }   \n{/macro}" , 
-	  data : "var data = {\n    fruits : [\"Banana\", \"Orange\", \"Apple\"]\n}"
+	  template : $("template-content").innerHTML, 
+	  script : $("script-content").innerHTML, 
+	  css : $("css-content").innerHTML, 
+	  data : $("data-content").innerHTML
 	};
 
 	var updateEditorSilently = function (e, content) {
