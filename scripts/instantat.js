@@ -278,7 +278,8 @@
 	aria.core.AppEnvironment.setEnvironment({
 		defaultWidgetLibs : {
 			"aria" : "aria.widgets.AriaLib", 
-			"html" : "aria.html.HtmlLibrary"
+			"html" : "aria.html.HtmlLibrary", 
+      "touch" : "aria.touch.widgets.TouchWidgetLib"
 		}
 	});
 
