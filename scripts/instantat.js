@@ -153,7 +153,6 @@
     loadTemplateScript(snippet.script);
     loadTemplateStyle(snippet.css, data);  
     loadTemplate(snippet.template, data);
-
   };
 
   /**
@@ -289,17 +288,18 @@
   aria.core.AppEnvironment.setEnvironment({
     defaultWidgetLibs : {
       "aria" : "aria.widgets.AriaLib", 
-      "html" : "aria.html.HtmlLibrary"
+      "html" : "aria.html.HtmlLibrary",
+      "touch" : "aria.touch.widgets.TouchWidgetLib"
     }
   });
 
   Aria.load({
     classes:["aria.utils.HashManager", "aria.templates.CSSClassGenerator"],
-      oncomplete:{
-        fn: function () {
-          // loading fake template to get necessary dependencies
-          Aria.loadTemplate({classpath: "A",div: "preview",data:{}}, {fn : init, scope : null});
-        }
+    oncomplete:{
+      fn: function () {
+        // loading fake template to get necessary dependencies
+        Aria.loadTemplate({classpath: "A",div: "preview",data:{}}, {fn : init, scope : null});
       }
-    });
+    }
+  });
 })();
