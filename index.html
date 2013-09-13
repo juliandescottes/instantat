@@ -1,73 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!--
-        Supported query params:
-        * ?dev=true or ?dev=1 to enable development files instead of minified ones
-        * ?version=1.3.5 etc. to request specific version of AT
-    -->
-    <title>Instant Aria Templates!</title>
-    <link rel="icon" type="image/png" href="favicon_3.png">
-    <link rel="stylesheet" type="text/css" href="css/instantat.css">
-    <script src="lib/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="scripts/atloader.js?" type="text/javascript"></script>
-    <script type="text/javascript">
-        aria.core.DownloadMgr.updateRootMap({
-            "aria": {"*" : ariaPath},
-            "*" : "./"
-        });
-    </script>
+  <!--
+    Supported query params:
+    * ?dev=true or ?dev=1 to enable development files instead of minified ones
+    * ?version=1.3.5 etc. to request specific version of AT
+  -->
+  <title>Instant Aria Templates!</title>
+  <link rel="icon" type="image/png" href="favicon_3.png">
+  <link rel="stylesheet" type="text/css" href="css/instantat.css">
+  <script src="lib/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="scripts/atloader.js?" type="text/javascript"></script>
+  <script type="text/javascript">
+    aria.core.DownloadMgr.updateRootMap({
+      "aria": {"*" : ariaPath},
+      "*" : "./"
+    });
+  </script>
 </head>
 <body>
-<script type="text/template" id="template-content">{macro main()}
+<script type="text/template" id="template-content">{Template {
+  $classpath : "Test",
+  $hasScript : true,
+  $css : ["TestStyle"]
+}}
+  {macro main()}
     <ul>
-    {foreach fruit in data.fruits}
+      {foreach fruit in data.fruits}
         <li>${fruit_index} : ${fruit}</li>
-    {/foreach}
+      {/foreach}
     </ul>
-{/macro}</script>
-<script type="text/template" id="script-content">({
-    $classpath:'TestScript',
-    $prototype : {
-        myMethod : function () {
+  {/macro}
+{/Template}
+</script>
+<script type="text/template" id="script-content">Aria.tplScriptDefinition({
+  $classpath:"TestScript",
+  $prototype : {
+    myMethod : function () {
 
-        }
     }
-})</script>
-<script type="text/template" id="css-content">{macro main()}
+  }
+});</script>
+<script type="text/template" id="css-content">{CSSTemplate {
+  $classpath : "TestStyle"
+}}
+  {macro main()}
     ul {
-        padding-left : 20px;
-        font-family : Arial
+      padding-left : 20px;
+      font-family : Arial
     }   
-{/macro}</script>
+  {/macro}
+{/CSSTemplate}</script>
 <script type="text/template" id="data-content">var data = {
-    fruits : ["Banana", "Orange", "Apple"]
+  fruits : ["Banana", "Orange", "Apple"]
 }</script>
-    <div id="editors-container">
-        <div class="tab-panel">
-            <div id="tab-template" class="tab-item tab-selected" onclick="iat.selectEditor(event)">Template</div>
-            <div id="tab-script" class="tab-item" onclick="iat.selectEditor(event)">Script</div>
-            <div id="tab-css" class="tab-item" onclick="iat.selectEditor(event)">CSS</div>
-            <div id="tabpanel-message" class="tabpanel-message-container"></div>
-            <div class="tab-item tab-button tab-item-right" onclick="iat.save()">Save</div>
-        </div>
-        <div id="multi-editor"></div>
-        <!-- H-SPLITTER -->
-        <div id="editors-splitter" class="resize-handle resize-handle-h"></div>
-        <div id="editors-splitter-proxy" class="resize-handle resize-proxy resize-proxy-h resize-proxy-hidden"></div>
-        <div id="data-editor"></div>
+  <div id="editors-container">
+    <div class="tab-panel">
+      <div id="tab-template" class="tab-item tab-selected" onclick="iat.selectEditor(event)">Template</div>
+      <div id="tab-script" class="tab-item" onclick="iat.selectEditor(event)">Script</div>
+      <div id="tab-css" class="tab-item" onclick="iat.selectEditor(event)">CSS</div>
+      <div id="tabpanel-message" class="tabpanel-message-container"></div>
+      <div class="tab-item tab-button tab-item-right" onclick="iat.save()">Save</div>
     </div>
-    <!-- V-SPLITTER -->
-    <div id="main-splitter" class="resize-handle resize-handle-v"></div>
-    <div id="main-splitter-proxy" class="resize-handle resize-proxy resize-proxy-v resize-proxy-hidden"></div>
-    <div id="preview"></div>
-    <div id="error-container-main"></div>
-    <div id="error-container-data"></div>
-    <div id="error-tooltip" class="tooltip"></div>
-    <script src="scripts/errors.js" type="text/javascript"></script>
-    <script src="scripts/store.js" type="text/javascript"></script>
-    <script src="scripts/splitter.js" type="text/javascript"></script>
-    <script src="scripts/instantat.js" type="text/javascript"></script>
-    <script src="scripts/hints.js" type="text/javascript"></script>
+    <div id="multi-editor"></div>
+    <!-- H-SPLITTER -->
+    <div id="editors-splitter" class="resize-handle resize-handle-h"></div>
+    <div id="editors-splitter-proxy" class="resize-handle resize-proxy resize-proxy-h resize-proxy-hidden"></div>
+    <div id="data-editor"></div>
+  </div>
+  <!-- V-SPLITTER -->
+  <div id="main-splitter" class="resize-handle resize-handle-v"></div>
+  <div id="main-splitter-proxy" class="resize-handle resize-proxy resize-proxy-v resize-proxy-hidden"></div>
+  <div id="preview"></div>
+  <div id="error-container-main"></div>
+  <div id="error-container-data"></div>
+  <div id="error-tooltip" class="tooltip"></div>
+  <script src="scripts/errors.js" type="text/javascript"></script>
+  <script src="scripts/store.js" type="text/javascript"></script>
+  <script src="scripts/splitter.js" type="text/javascript"></script>
+  <script src="scripts/converter.js" type="text/javascript"></script>
+  <script src="scripts/instantat.js" type="text/javascript"></script>
+  <script src="scripts/hints.js" type="text/javascript"></script>
 </body>
 </html>

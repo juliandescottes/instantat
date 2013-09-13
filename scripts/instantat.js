@@ -1,7 +1,9 @@
-(function () {
+(function (exports) {
   // SETTINGS //
   var CURRENT_VERSION = 1,
-    ACE_THEME = 
+    ACE_THEME = "ace/theme/monokai",
+    ACE_FONT_SIZE = "14px",
+    MONGO_KEY = "apiKey=eHom4izItOoREUUPRPKfBNwzQdDlO-62";
 
   var $ = function (id) {return document.getElementById(id);};
   var currentType = "template",
@@ -55,8 +57,7 @@
   };
 
   var loadTemplate = function (tpl_content, data) {
-    var tplString = "{Template {$classpath : 'Test', $hasScript:true, $css:['TestStyle']}}"+tpl_content+"{/Template}"
-    aria.templates.TplClassGenerator.parseTemplate(tplString, false,
+    aria.templates.TplClassGenerator.parseTemplate(tpl_content, false,
       {
         fn : function (res, args) {
           if (res.classDef) {
@@ -79,7 +80,7 @@
 
   var loadTemplateScript = function (script_content) {
     try {
-      eval("Aria.tplScriptDefinition("+script_content+");");
+      eval(script_content);
       errors.removeError("script");  
     } catch (e) {
       errors.setError("script", "[SCRIPT ERROR] : " + e.message);
@@ -104,8 +105,7 @@
   };
 
   var loadTemplateStyle = function (css_content, data) {
-    var tplString = "{CSSTemplate {$classpath : 'TestStyle'}}"+css_content+"{/CSSTemplate}"
-    aria.templates.CSSClassGenerator.parseTemplate(tplString, false, 
+    aria.templates.CSSClassGenerator.parseTemplate(css_content, false, 
       {
         fn : function (res, args) {
           if (res.classDef) {
@@ -182,12 +182,12 @@
 
   var init = function () {
     editor = ace.edit("multi-editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.setFontSize("14px");
+    editor.setTheme(ACE_THEME);
+    editor.setFontSize(ACE_FONT_SIZE);
     editor.getSession().setMode("ace/mode/aria");
 
     data_editor = ace.edit("data-editor");
-    data_editor.setFontSize("14px");
+    data_editor.setFontSize(ACE_FONT_SIZE);
     data_editor.getSession().setMode("ace/mode/javascript");
 
     reassignCommand(editor, "gotoline", "Ctrl-G", "Command-G");
@@ -198,8 +198,7 @@
 
     errors = new ErrorManager(editor, data_editor);
 
-    var key = "apiKey=eHom4izItOoREUUPRPKfBNwzQdDlO-62";
-    store = new MongoStore("at-snippets", "snippets", key);
+    store = new MongoStore("at-snippets", "snippets", MONGO_KEY);
 
     refreshUnlessIdInHash();
 
@@ -228,7 +227,7 @@
       delete loadedSnippet._id;
       var snippetVersion = loadedSnippet.version || 0;
       if (snippetVersion < CURRENT_VERSION) {
-
+        loadedSnippet = exports.convertSnippet(loadedSnippet, snippetVersion);
       }
       snippet = loadedSnippet;
       refresh();
@@ -247,6 +246,7 @@
   };
   
   var save = function () {
+    snippet.version = CURRENT_VERSION;
     store.save(snippet, function (savedSnippet) {
       var id = savedSnippet._id.$oid;
       aria.utils.HashManager.setHash(id);
@@ -276,19 +276,10 @@
     data_editor.resize();
   };
 
-  var exports = {
-    selectEditor : selectEditor,
-    save : save,
-    onEditorsSplitterReleased : onEditorsSplitterReleased,
-    onMainSplitterReleased : onMainSplitterReleased,
-    getCurrentType : function () {return currentType}
-  };
-
-  window.iat = exports;
   aria.core.AppEnvironment.setEnvironment({
     defaultWidgetLibs : {
       "aria" : "aria.widgets.AriaLib", 
-      "html" : "aria.html.HtmlLibrary",
+      "html" : "aria.html.HtmlLibrary",   
       "touch" : "aria.touch.widgets.TouchWidgetLib"
     }
   });
@@ -302,4 +293,12 @@
       }
     }
   });
-})();
+  
+  exports.iat = {
+    selectEditor : selectEditor,
+    save : save,
+    onEditorsSplitterReleased : onEditorsSplitterReleased,
+    onMainSplitterReleased : onMainSplitterReleased,
+    getCurrentType : function () {return currentType}
+  };
+})(window);
