@@ -9,18 +9,35 @@
     this.el1 = el1;
     this.el2 = el2;
     this.orientation = orientation;
+
+    this.ratio = 2
+    
     this.mousedownListener = this.onHandleMousedown.bind(this);
     this.mouseupListener = this.onDocMouseup.bind(this);
     this.mousemoveListener = this.onDocMousemove.bind(this);
+    this.resizeListener = this.onWindowResize.bind(this);
 
     this.handle.addEventListener("mousedown", this.mousedownListener);
+    window.addEventListener("resize", this.resizeListener);
 
+    this.onWindowResize();
+  };
+
+  Splitter.prototype.onWindowResize = function () {
     if (this.isVertical()) {
-      this.handle.style.top = (el1.parentNode.offsetHeight/2 - (SPLITTER_DIM/2)) + "px";
+      this.handle.style.top = (this.el1.parentNode.offsetHeight/this.ratio - (SPLITTER_DIM/2)) + "px";
     } else {
-      this.handle.style.left = (el1.parentNode.offsetWidth/2 - (SPLITTER_DIM/2)) + "px";
+      this.handle.style.left = (this.el1.parentNode.offsetWidth/this.ratio - (SPLITTER_DIM/2)) + "px";
     }
     this.resizeContainers();
+  };
+
+  Splitter.prototype.updateRatio = function () {
+    if (this.isVertical()) {
+      this.ratio = this.el1.parentNode.offsetHeight / (this.handle.offsetTop + (SPLITTER_DIM/2));
+    } else {
+      this.ratio = this.el1.parentNode.offsetWidth / (this.handle.offsetLeft + (SPLITTER_DIM/2));
+    }
   };
 
   Splitter.prototype.onHandleMousedown = function (evt) {
@@ -58,6 +75,7 @@
   Splitter.prototype.onDocMouseup = function (evt) {
     this.updateSplitterHandle(evt);
     this.resizeContainers();
+    this.updateRatio();
     evt.preventDefault();
   };
 
@@ -79,7 +97,6 @@
     this.updatePosFromEvent(this.proxy, evt);
     evt.preventDefault();
   };
-
 
   window.Splitter = Splitter;
 })();
