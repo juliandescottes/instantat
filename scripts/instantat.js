@@ -1,4 +1,5 @@
 (function (exports) {
+  var aria = window.aria;
   // SETTINGS //
   var CURRENT_VERSION = 1,
     ACE_THEME = "ace/theme/monokai",
@@ -14,10 +15,10 @@
    * Backward compatibility of snippet model
    * - version `0` : Simplified template, script, etc ... Need to add overhead
    */
-  var snippet = { 
-    template : $("template-content").innerHTML, 
-    script : $("script-content").innerHTML, 
-    css : $("css-content").innerHTML, 
+  var snippet = {
+    template : $("template-content").innerHTML,
+    script : $("script-content").innerHTML,
+    css : $("css-content").innerHTML,
     data : $("data-content").innerHTML,
     version : 1
   };
@@ -30,7 +31,7 @@
 
   var selectEditor = function (evt) {
     var previousType = currentType;
-    currentType = evt.target.innerHTML.toLowerCase(); 
+    currentType = evt.target.innerHTML.toLowerCase();
 
     updateEditorSilently(editor, snippet[currentType]);
 
@@ -41,16 +42,17 @@
     document.getElementById("tab-" + previousType).classList.remove("tab-selected");
     document.getElementById("tab-" + currentType).classList.add("tab-selected");
 
-    errors.refreshErrors();
+    window.errors.refreshErrors();
   };
 
   var loadModel = function (model_content) {
+    var data;
     try {
-      eval(model_content);  
-      errors.removeError("data");  
+      eval(model_content);
+      window.errors.removeError("data");
     } catch (e) {
-      errors.setError("data","[DATA MODEL ERROR] : " + e.message);
-      var data = {};
+      window.errors.setError("data","[DATA MODEL ERROR] : " + e.message);
+      data = {};
     }
 
     return data;
@@ -59,11 +61,11 @@
   var loadTemplate = function (tpl_content, data) {
     aria.templates.TplClassGenerator.parseTemplate(tpl_content, false,
       {
-        fn : function (res, args) {
+        fn : function (res) {
           if (res.classDef) {
-            errors.removeError("template");
+            window.errors.removeError("template");
             loadTemplateInPreview(res.classDef, data);
-          } 
+          }
         }
       },{"file_classpath" : "Test"}
     );
@@ -75,7 +77,7 @@
         fn : onTemplateLoaded, args: data, scope : window
       }
     });
-    Aria["eval"](classDef);
+    window.Aria.eval(classDef);
   };
 
   var loadTemplateScript = function (script_content) {
@@ -151,7 +153,7 @@
     }
     
     loadTemplateScript(snippet.script);
-    loadTemplateStyle(snippet.css, data);  
+    loadTemplateStyle(snippet.css, data);
     loadTemplate(snippet.template, data);
   };
 
@@ -164,9 +166,9 @@
    * @return {Boolean} true only if the command was successfully added
    */
   var reassignCommand = function (editor, commandName, winShortcut, macShortcut) {
-    var prevCommand = editor.commands.byName[commandName]; 
+    var prevCommand = editor.commands.byName[commandName];
     if (typeof prevCommand == "undefined") {
-      console.error("[instantAt:reassignCommand]Command " + cmdName + " does not exist.");
+      window.console.error("[instantAt:reassignCommand]Command " + commandName + " does not exist.");
       return false;
     } else {
       // addCommand will remove the command before creating the new one
@@ -175,12 +177,18 @@
         bindKey: {win : winShortcut, mac : macShortcut},
         exec: prevCommand.exec,
         readOnly: prevCommand.readOnly
-      })
+      });
       return true;
     }
   };
 
+  var initSplitters = function () {
+    new Splitter("main-splitter", $("editors-container"), $("preview"), "horizontal", onSplitterReleased);
+    new Splitter("editors-splitter", $("multi-editor"), $("data-editor"), "vertical", onSplitterReleased);
+  };
+
   var init = function () {
+    var ace = window.ace;
     editor = ace.edit("multi-editor");
     editor.setTheme(ACE_THEME);
     editor.setFontSize(ACE_FONT_SIZE);
@@ -196,9 +204,9 @@
     editor.on("change", onEditorChange);
     data_editor.on("change", onEditorChange);
 
-    errors = new ErrorManager(editor, data_editor);
+    window.errors = new window.ErrorManager(editor, data_editor);
 
-    store = new MongoStore("at-snippets", "snippets", MONGO_KEY);
+    window.store = new window.MongoStore("at-snippets", "snippets", MONGO_KEY);
 
     refreshUnlessIdInHash();
 
@@ -206,6 +214,8 @@
       fn : refreshUnlessIdInHash,
       scope : null
     });
+
+    initSplitters();
   };
 
   var refreshUnlessIdInHash = function () {
@@ -215,7 +225,7 @@
       displayMessage("Loading " + snippet_id + " ...");
       store.get(snippet_id, loadSnippetCb);
     } else {
-      refresh();  
+      refresh();
     }
   };
 
@@ -232,17 +242,17 @@
       snippet = loadedSnippet;
       refresh();
     } else {
-      aria.utils.HashManager.setHash(""); 
+      aria.utils.HashManager.setHash("");
     }
   };
 
-  var messageEl = document.getElementById("tabpanel-message"), 
+  var messageEl = document.getElementById("tabpanel-message"),
     messageTimeout;
 
   var displayMessage = function (text) {
     messageEl.innerHTML = text;
     window.clearTimeout(messageTimeout);
-    messageTimeout = window.setTimeout(function () {messageEl.innerHTML=""}, 10000)
+    messageTimeout = window.setTimeout(function () {messageEl.innerHTML="";}, 10000);
   };
   
   var save = function () {
@@ -250,36 +260,21 @@
     store.save(snippet, function (savedSnippet) {
       var id = savedSnippet._id.$oid;
       aria.utils.HashManager.setHash(id);
-      window.setTimeout(function () {displayMessage("Snippet saved at <a href='#"+id+"'>#"+id+"</a>")}, 100);
+      window.setTimeout(function () {
+        displayMessage("Snippet saved at <a href='#"+id+"'>#"+id+"</a>");
+      }, 100);
     });
   };
 
-
-  var setPositionInPx = function (elem, posName, value) {
-    elem.style[posName] = value + "px";
-  } 
-
-  var onEditorsSplitterReleased = function (top, splitterDim) {
-    setPositionInPx($("multi-editor"), "height", top - 30);
-    setPositionInPx($("data-editor"), "top", top + splitterDim + 1);
-    $("data-editor").style.height = "auto";
-    
-    editor.resize();
-    data_editor.resize();
-  };
-
-  var onMainSplitterReleased = function (left, splitterDim) {
-    setPositionInPx($("editors-container"), "width", left);
-    setPositionInPx($("preview"), "left", left + splitterDim + 1);
-    
+  var onSplitterReleased = function () {
     editor.resize();
     data_editor.resize();
   };
 
   aria.core.AppEnvironment.setEnvironment({
     defaultWidgetLibs : {
-      "aria" : "aria.widgets.AriaLib", 
-      "html" : "aria.html.HtmlLibrary",   
+      "aria" : "aria.widgets.AriaLib",
+      "html" : "aria.html.HtmlLibrary",
       "touch" : "aria.touch.widgets.TouchWidgetLib"
     }
   });
@@ -297,8 +292,6 @@
   exports.iat = {
     selectEditor : selectEditor,
     save : save,
-    onEditorsSplitterReleased : onEditorsSplitterReleased,
-    onMainSplitterReleased : onMainSplitterReleased,
-    getCurrentType : function () {return currentType}
+    getCurrentType : function () {return currentType;}
   };
 })(window);

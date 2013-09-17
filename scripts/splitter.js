@@ -1,55 +1,85 @@
 (function () {
-	var $ = function (id) {return document.getElementById(id);};
-	var SPLITTER_DIM = 6;
-	var currentSplitter = null;
+  var $ = function (id) {return document.getElementById(id);};
+  var SPLITTER_DIM = 6;
 
-	var Splitter = function (splitterId, orientation, callback) {
-		this.handle = $(splitterId);
-		this.proxy = $(splitterId + "-proxy");
-		this.callback = callback;
-		this.orientation = orientation;
-		this.handle.addEventListener("mousedown", this.onHandleMousedown.bind(this));
-	};
+  var Splitter = function (splitterId, el1, el2, orientation, callback) {
+    this.handle = $(splitterId);
+    this.proxy = $(splitterId + "-proxy");
+    this.callback = callback;
+    this.el1 = el1;
+    this.el2 = el2;
+    this.orientation = orientation;
+    this.mousedownListener = this.onHandleMousedown.bind(this);
+    this.mouseupListener = this.onDocMouseup.bind(this);
+    this.mousemoveListener = this.onDocMousemove.bind(this);
 
-	Splitter.prototype.onHandleMousedown = function (evt) {
-		currentSplitter = this;
-		this.updatePosFromEvent(this.proxy, evt);
-		this.proxy.classList.remove("resize-proxy-hidden");	
-		evt.preventDefault();
-	};
+    this.handle.addEventListener("mousedown", this.mousedownListener);
 
-	Splitter.prototype.afterMouseUp = function (evt) {
-		this.updatePosFromEvent(this.handle, evt)
-		this.proxy.classList.add("resize-proxy-hidden");
-		currentSplitter = null;
-	};
+    if (this.isVertical()) {
+      this.handle.style.top = (el1.parentNode.offsetHeight/2 - (SPLITTER_DIM/2)) + "px";
+    } else {
+      this.handle.style.left = (el1.parentNode.offsetWidth/2 - (SPLITTER_DIM/2)) + "px";
+    }
+    this.resizeContainers();
+  };
 
-	Splitter.prototype.updatePosFromEvent = function (el, evt) {
-		if (this.orientation == "vertical") {
-			el.style.top = (evt.pageY - (SPLITTER_DIM/2)) + "px";
-		} else {
-			el.style.left = (evt.pageX - (SPLITTER_DIM/2)) + "px";
-		}
-	};
+  Splitter.prototype.onHandleMousedown = function (evt) {
+    this.updatePosFromEvent(this.proxy, evt);
+    this.proxy.classList.remove("resize-proxy-hidden");
 
-	var onDocMouseup = function (evt) {
-		if (currentSplitter) {
-			currentSplitter.callback(evt);
-			currentSplitter.afterMouseUp(evt);
-			evt.preventDefault();
-		}
-	};
+    document.addEventListener("mouseup", this.mouseupListener);
+    document.addEventListener("mousemove", this.mousemoveListener);
 
-	var onDocMousemove = function (evt) {
-		if (currentSplitter) {
-			currentSplitter.updatePosFromEvent(currentSplitter.proxy, evt);
-			evt.preventDefault();
-		}
-	};
+    evt.preventDefault();
+  };
 
-	document.addEventListener("mouseup", onDocMouseup);
-	document.addEventListener("mousemove", onDocMousemove);	
+  Splitter.prototype.updateSplitterHandle = function (evt) {
+    this.updatePosFromEvent(this.handle, evt)
+    this.proxy.classList.add("resize-proxy-hidden");
 
-	new Splitter("main-splitter", "horizontal",  function (evt) {window.iat.onMainSplitterReleased(evt.pageX - (SPLITTER_DIM/2), SPLITTER_DIM);});
-	new Splitter("editors-splitter", "vertical",  function (evt) {window.iat.onEditorsSplitterReleased(evt.pageY - (SPLITTER_DIM/2), SPLITTER_DIM);});
+    document.removeEventListener("mouseup", this.mouseupListener);
+    document.removeEventListener("mousemove", this.mousemoveListener);
+  };
+
+  Splitter.prototype.updatePosFromEvent = function (el, evt) {
+    if (this.isVertical()) {
+      var offset = this.handle.getBoundingClientRect().top - this.handle.offsetTop;
+      el.style.top = (evt.pageY - offset - (SPLITTER_DIM/2)) + "px";
+    } else {
+      var offset = this.handle.getBoundingClientRect().left - this.handle.offsetLeft;
+      el.style.left = (evt.pageX - offset -(SPLITTER_DIM/2)) + "px";
+    }
+  };
+
+  Splitter.prototype.isVertical = function () {
+    return this.orientation == "vertical";
+  };
+
+  Splitter.prototype.onDocMouseup = function (evt) {
+    this.updateSplitterHandle(evt);
+    this.resizeContainers();
+    evt.preventDefault();
+  };
+
+  Splitter.prototype.resizeContainers = function (coordinate) {
+    if (this.isVertical()) {
+      var splitterTop = this.handle.offsetTop;
+      this.el1.style.height = splitterTop + "px";
+      this.el2.style.top = (splitterTop + SPLITTER_DIM + 1) + "px";
+    } else {
+      var splitterLeft = this.handle.offsetLeft;
+      this.el1.style.width = splitterLeft + "px";
+      this.el2.style.left = (splitterLeft + SPLITTER_DIM + 1) + "px";
+    }
+    
+    this.callback();
+  };
+
+  Splitter.prototype.onDocMousemove = function (evt) {
+    this.updatePosFromEvent(this.proxy, evt);
+    evt.preventDefault();
+  };
+
+
+  window.Splitter = Splitter;
 })();
