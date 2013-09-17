@@ -9,7 +9,7 @@
   var $ = function (id) {return document.getElementById(id);};
   var currentType = "template",
     unplugged = false,
-    editor = null, store = null, data_editor = null;
+    editor = null, data_editor = null;
 
   /**
    * Backward compatibility of snippet model
