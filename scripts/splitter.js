@@ -11,7 +11,7 @@
     this.orientation = orientation;
 
     this.ratio = 2
-    
+
     this.mousedownListener = this.onHandleMousedown.bind(this);
     this.mouseupListener = this.onDocMouseup.bind(this);
     this.mousemoveListener = this.onDocMousemove.bind(this);

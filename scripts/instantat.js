@@ -9,7 +9,7 @@
   var $ = function (id) {return document.getElementById(id);};
   var currentType = "template",
     unplugged = false,
-    editor = null, data_editor = null;
+    editor = null, errors = null, store= null, data_editor = null;
 
   /**
    * Backward compatibility of snippet model
@@ -42,16 +42,16 @@
     document.getElementById("tab-" + previousType).classList.remove("tab-selected");
     document.getElementById("tab-" + currentType).classList.add("tab-selected");
 
-    window.errors.refreshErrors();
+    errors.refreshErrors();
   };
 
   var loadModel = function (model_content) {
     var data;
     try {
       eval(model_content);
-      window.errors.removeError("data");
+      errors.removeError("data");
     } catch (e) {
-      window.errors.setError("data","[DATA MODEL ERROR] : " + e.message);
+      errors.setError("data","[DATA MODEL ERROR] : " + e.message);
       data = {};
     }
 
@@ -63,7 +63,7 @@
       {
         fn : function (res) {
           if (res.classDef) {
-            window.errors.removeError("template");
+            errors.removeError("template");
             loadTemplateInPreview(res.classDef, data);
           }
         }
@@ -204,9 +204,9 @@
     editor.on("change", onEditorChange);
     data_editor.on("change", onEditorChange);
 
-    window.errors = new window.ErrorManager(editor, data_editor);
+    errors = new window.ErrorManager(editor, data_editor);
 
-    window.store = new window.MongoStore("at-snippets", "snippets", MONGO_KEY);
+    store = new window.MongoStore("at-snippets", "snippets", MONGO_KEY);
 
     refreshUnlessIdInHash();
 
